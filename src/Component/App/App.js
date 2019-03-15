@@ -30,7 +30,6 @@ class App extends Component {
 
   render() {
     const { history, taskPage } = this.props
-
     return (
       <ConnectedRouter history={history}>
         <div>

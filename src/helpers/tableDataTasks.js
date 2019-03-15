@@ -11,18 +11,16 @@ const tableDataTasks = rows => {
       for (let i = 0; i < 24; i += 1) {
         let oneHour
         if (i === item.timeStart.getUTCHours()) {
-          if (item.timeSpend.getUTCHours() < 1) {
+          if (item.timeSpend.getUTCHours() === 0) {
             const minutes = 60 - item.timeStart.getUTCMinutes()
             if (minutes > item.timeSpend.getUTCMinutes()) {
               oneHour = { hour: i, minutes: item.timeSpend.getUTCMinutes() }
-            }
-            if (minutes < item.timeSpend.getUTCMinutes()) {
+            } else if (minutes <= item.timeSpend.getUTCMinutes()) {
               oneHour = { hour: i, minutes }
               nowMinutes = item.timeSpend.getUTCMinutes() - minutes
               nowHours2 = i + 1
             }
-          }
-          if (item.timeSpend.getUTCHours() >= 1) {
+          } else if (item.timeSpend.getUTCHours() >= 1) {
             const minutes = 60 - item.timeStart.getUTCMinutes()
             oneHour = { hour: i, minutes }
             time = new Date(item.timeSpend - (minutes * 60000))

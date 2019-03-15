@@ -231,7 +231,7 @@ export function* changeTaskPageSaga(action) {
 
 export function* generateNewRowsSaga() {
   try {
-    const newRows = generateRows(13, 1, 30)
+    const newRows = generateRows()
     yield put({
       type: GENERATE_NEWROWS__SUCCESS,
       payload: {
