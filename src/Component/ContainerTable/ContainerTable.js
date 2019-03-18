@@ -135,7 +135,6 @@ const mapStateToProps = state => ({
   textFieldName: state.initialState.textFieldName,
   tabContainerValue: state.initialState.tabContainerValue,
   isModalOpen: state.initialState.isModalOpen,
-
 })
 
 
