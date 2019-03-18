@@ -5,7 +5,7 @@ if (localState) {
   if (state.dateStart) {
     initialState = {
       timeSpendTimer: new Date().getTime() - new Date(state.dateStart).getTime(),
-      dateStart: state.dateStart,
+      dateStart: new Date(state.dateStart),
       textFieldName: state.textFieldName,
       tabContainerValue: state.tabContainerValue,
       isRunData: true,

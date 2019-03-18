@@ -198,7 +198,6 @@ export default function taskReducer(state = initialState, action) {
       }
     }
 
-
     default:
       return state
   }

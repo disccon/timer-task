@@ -65,11 +65,11 @@ class App extends Component {
             <Route
               exact
               path='/'
-              render={() => <Redirect to='/Home' />}
+              render={() => <Redirect to='/Home'/>}
             />
-            <Route path='/Home' component={ContainerTable} />
-            <Redirect to='/NodFound' />
-            <Route to='/NodFound' component={NodFound} />
+            <Route path='/Home' component={ContainerTable}/>
+            <Redirect to='/NodFound'/>
+            <Route to='/NodFound' component={NodFound}/>
           </Switch>
         </div>
       </ConnectedRouter>

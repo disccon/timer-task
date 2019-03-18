@@ -10,8 +10,8 @@ const tableDataTasks = tasks => {
         let nowHours
         const timeSpendHours = Math.floor((item.timeSpend / 3660000) % 60)
         const timeSpendMinutes = Math.floor((item.timeSpend / 60000) % 60)
-        const timeStartHours = item.timeStart.getHours()
-        const timeStartMinutes = item.timeStart.getMinutes()
+        const timeStartHours = new Date(item.timeStart).getHours()
+        const timeStartMinutes = new Date(item.timeStart).getMinutes()
         let timeSpendHoursLeft
         let timeSpendMinutesLeft
         for (let i = 0; i < 24; i += 1) {
