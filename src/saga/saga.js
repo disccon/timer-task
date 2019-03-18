@@ -1,10 +1,12 @@
-import { put, delay, cancel } from 'redux-saga/effects'
+import {
+  put, delay, cancel, select,
+} from 'redux-saga/effects'
 import { push } from 'connected-react-router'
 
 
 import {
-  CHANGE_NAME__CHANGE,
-  CHANGE_NAME__FAILURE,
+  CHANGE_NAME_TEXT_FIELD__SUCCESS,
+  CHANGE_NAME_TEXT_FIELD__FAILURE,
 
   SAVE_DATASTART__SUCCESS,
   SAVE_DATASTART__FAILURE,
@@ -12,43 +14,43 @@ import {
   START_TIME__SUCCESS,
   START_TIME__FAILURE,
 
-  CHANGE_MODAL__OPEN,
-  CHANGE_MODAL__CLOSE,
-  CHANGE_MODAL__FAILURE,
+  CHANGE_STATE_MODAL__OPEN,
+  CHANGE_STATE_MODAL__CLOSE,
+  CHANGE_STATE_MODAL__FAILURE,
 
   CREATE_NEWTASK,
   CREATE_NEWTASK__SUCCESS,
   CREATE_NEWTASK__FAILURE,
 
-  CHOOSE_TABS__NOHAVE_TASK,
-  CHOOSE_TABS__SUCCESS,
-  CHOOSE_TABS__FAILURE,
+  SELECT_ACTIVE_TABS__NOHAVE_TASK,
+  SELECT_ACTIVE_TABS__SUCCESS,
+  SELECT_ACTIVE_TABS__FAILURE,
 
-  CHANGE_TASKPAGE__SUCCESS,
-  CHANGE_TASKPAGE__FAILURE,
+  PUSH_TASKPAGE__SUCCESS,
+  PUSH_TASKPAGE__FAILURE,
 
   DELETE_TASK__SUCCESS,
   DELETE_TASK__FAILURE,
 
-  GENERATE_NEWROWS__SUCCESS,
-  GENERATE_NEWROWS__FAILURE,
+  GENERATE_NEW_TASKS__FAILURE,
+  GENERATE_NEW_TASKS__SUCCESS,
 
   RETURN_HOMEPAGE__SUCCESS,
   RETURN_HOMEPAGE__FAILURE,
 
   startTime,
 } from '../Component/Actions'
-import generateRows from '../helpers/generateRows'
+import generateTasks from '../helpers/generateTasks'
 
-export function* changeNameSaga(action) {
+export function* changeNameTextFieldSaga(action) {
   try {
     yield put({
-      type: CHANGE_NAME__CHANGE,
-      payload: { nameTask: action.payload.nameTask },
+      type: CHANGE_NAME_TEXT_FIELD__SUCCESS,
+      payload: { textFieldName: action.payload.textFieldName },
     })
   } catch (error) {
     yield put({
-      type: CHANGE_NAME__FAILURE,
+      type: CHANGE_NAME_TEXT_FIELD__FAILURE,
       error,
     })
   }
@@ -58,15 +60,14 @@ export function* startTimeSaga(action) {
   if (action.type === CREATE_NEWTASK) {
     yield cancel()
   }
-  const { date } = action.payload
+  let { timeSpendTimer } = action.payload
   try {
-    let newData = date
     while (true) {
       yield delay(1000)
-      newData = new Date(newData.getTime() + 1000)
+      timeSpendTimer += 1000
       yield put({
         type: START_TIME__SUCCESS,
-        payload: { date: newData },
+        payload: { timeSpendTimer },
       })
     }
   } catch (error) {
@@ -77,18 +78,16 @@ export function* startTimeSaga(action) {
   }
 }
 
-export function* saveDataStartSaga(action) {
-  const { date } = action.payload
+export function* saveDataStartSaga() {
+  const timeSpendTimer = yield select(state => state.initialState.timeSpendTimer)
   try {
-    const newData = new Date()
     yield put({
       type: SAVE_DATASTART__SUCCESS,
       payload: {
-        dateStart: new Date(Date.UTC(newData.getFullYear(), newData.getMonth(), newData.getDay(),
-          newData.getHours(), newData.getMinutes(), newData.getSeconds())),
+        dateStart: new Date(),
       },
     })
-    yield put(startTime(date))
+    yield put(startTime(timeSpendTimer))
   } catch (error) {
     yield put({
       type: SAVE_DATASTART__FAILURE,
@@ -98,58 +97,46 @@ export function* saveDataStartSaga(action) {
 }
 
 
-export function* changeModalSaga(action) {
-  const { isModalOpen } = action.payload
+export function* changeStateModalSaga() {
+  const isModalOpen = yield select(state => state.initialState.isModalOpen)
   try {
     if (isModalOpen) {
       yield put({
-        type: CHANGE_MODAL__CLOSE,
+        type: CHANGE_STATE_MODAL__CLOSE,
       })
     } else {
       yield put({
-        type: CHANGE_MODAL__OPEN,
+        type: CHANGE_STATE_MODAL__OPEN,
       })
     }
   } catch (error) {
     yield put({
-      type: CHANGE_MODAL__FAILURE,
+      type: CHANGE_STATE_MODAL__FAILURE,
       error,
     })
   }
 }
 
 
-export function* createNewTaskSaga(action) {
+export function* createNewTaskSaga() {
+  const state = yield select(state => state.initialState)
   const {
-    nameTask, rows, dateStart, date,
-  } = action.payload
+    textFieldName, tasks, dateStart, timeSpendTimer,
+  } = state
   try {
-    let newRows
-    const newData = new Date()
-    if (rows.length === 0) {
-      newRows = [...rows, {
-        id: 1,
-        task: nameTask,
-        timeStart: dateStart,
-        timeEnd: new Date(Date.UTC(newData.getFullYear(), newData.getMonth(), newData.getDay(),
-          newData.getHours(), newData.getMinutes(), newData.getSeconds())),
-        timeSpend: date,
-      }]
-    } else {
-      newRows = [...rows, {
-        id: rows[rows.length - 1].id + 1,
-        task: nameTask,
-        timeStart: dateStart,
-        timeEnd: new Date(Date.UTC(newData.getFullYear(), newData.getMonth(), newData.getDay(),
-          newData.getHours(), newData.getMinutes(), newData.getSeconds())),
-        timeSpend: date,
-      }]
-    }
+    const id = tasks.length === 0 ? 1 : tasks[tasks.length - 1].id + 1
+    const newTasks = [...tasks, {
+      id,
+      taskName: textFieldName,
+      timeStart: dateStart,
+      timeEnd: new Date(),
+      timeSpend: timeSpendTimer,
+    }]
     yield put({
       type: CREATE_NEWTASK__SUCCESS,
       payload: {
-        data: new Date(Date.UTC(2019, 0, 1)),
-        newRows,
+        timeSpendTimer: 0,
+        newTasks,
       },
     })
   } catch (error) {
@@ -160,27 +147,28 @@ export function* createNewTaskSaga(action) {
   }
 }
 
-export function* chooseTabsSaga(action) {
+export function* selectActiveTabsSaga(action) {
   const {
-    tabContainerValue, rowsLength,
+    tabContainerValue,
   } = action.payload
+  const tasksLength = yield select(state => state.initialState.tasks.length)
   try {
-    if (rowsLength === 0) {
+    if (tasksLength === 0) {
       yield put({
-        type: CHOOSE_TABS__NOHAVE_TASK,
+        type: SELECT_ACTIVE_TABS__NOHAVE_TASK,
       })
     } else if (tabContainerValue === 0) {
       yield put(push('/'))
       yield put({
-        type: CHOOSE_TABS__SUCCESS,
+        type: SELECT_ACTIVE_TABS__SUCCESS,
         payload: {
           tabContainerValue: 0,
         },
       })
     } else if (tabContainerValue === 1) {
-      yield put(push('/TaskChart'))
+      yield put(push('/Home/TaskChart'))
       yield put({
-        type: CHOOSE_TABS__SUCCESS,
+        type: SELECT_ACTIVE_TABS__SUCCESS,
         payload: {
           tabContainerValue: 1,
         },
@@ -188,7 +176,7 @@ export function* chooseTabsSaga(action) {
     }
   } catch (error) {
     yield put({
-      type: CHOOSE_TABS__FAILURE,
+      type: SELECT_ACTIVE_TABS__FAILURE,
       error,
     })
   }
@@ -197,10 +185,13 @@ export function* chooseTabsSaga(action) {
 
 export function* deleteTaskSaga(action) {
   try {
-    const newRows = action.payload.rows.filter(arrIndex => arrIndex.id !== action.payload.id)
+    const tasks = yield select(state => state.initialState.tasks)
+    const newTasks = tasks.filter(arrIndex => arrIndex.id !== action.payload.id)
     yield put({
       type: DELETE_TASK__SUCCESS,
-      payload: { rows: newRows },
+      payload: {
+        tasks: newTasks,
+      },
     })
   } catch (error) {
     yield put({
@@ -210,11 +201,11 @@ export function* deleteTaskSaga(action) {
   }
 }
 
-export function* changeTaskPageSaga(action) {
+export function* pushTaskPageSaga(action) {
   const { taskPage } = action.payload
   try {
     yield put({
-      type: CHANGE_TASKPAGE__SUCCESS,
+      type: PUSH_TASKPAGE__SUCCESS,
       payload: {
         taskPage,
       },
@@ -222,25 +213,25 @@ export function* changeTaskPageSaga(action) {
     yield put(push(`/TaskPage/${taskPage}`))
   } catch (error) {
     yield put({
-      type: CHANGE_TASKPAGE__FAILURE,
+      type: PUSH_TASKPAGE__FAILURE,
       error,
     })
   }
 }
 
 
-export function* generateNewRowsSaga() {
+export function* generateNewTasksSaga() {
   try {
-    const newRows = generateRows()
+    const newTasks = generateTasks()
     yield put({
-      type: GENERATE_NEWROWS__SUCCESS,
+      type: GENERATE_NEW_TASKS__SUCCESS,
       payload: {
-        newRows,
+        newTasks,
       },
     })
   } catch (error) {
     yield put({
-      type: GENERATE_NEWROWS__FAILURE,
+      type: GENERATE_NEW_TASKS__FAILURE,
       error,
     })
   }
@@ -252,7 +243,7 @@ export function* returnHomePageSaga() {
     yield put({
       type: RETURN_HOMEPAGE__SUCCESS,
     })
-    yield put(push('/'))
+    yield put(push('/Home'))
   } catch (error) {
     yield put({
       type: RETURN_HOMEPAGE__FAILURE,

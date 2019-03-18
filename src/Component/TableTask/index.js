@@ -1,19 +1,19 @@
 import { connect } from 'react-redux'
 import {
-  changeTaskPage,
+  pushTaskPage,
   deleteTask,
-  generateNewRows,
+  generateNewTasks,
 } from '../Actions'
 import TableTask from './TableTask'
 
 const mapStateToProps = state => ({
-  rows: state.initialState.rows,
+  tasks: state.initialState.tasks,
 })
 
 
 export default connect(
   mapStateToProps,
   {
-    deleteTask, changeTaskPage, generateNewRows,
+    deleteTask, pushTaskPage, generateNewTasks,
   },
 )(TableTask)

@@ -11,9 +11,10 @@ import styles from './ContainerTable.scss'
 import TaskChart from '../TaskChart/TaskChart'
 import TableTask from '../TableTask'
 import {
-  changeName, saveDataStart, closeModal, createNewTask, chooseTabs,
+  changeNameTextField, saveDataStart, changeStateModal, createNewTask, selectActiveTabs,
 } from '../Actions'
 import tableDataTasks from '../../helpers/tableDataTasks'
+import { toShowTimeSpend } from '../../helpers/toShowTimeSpend'
 
 const cx = classNames.bind(styles)
 
@@ -21,39 +22,31 @@ const cx = classNames.bind(styles)
 class ContainerTable extends Component {
   startTimeHandlers = () => {
     const {
-      date, isButtonState, isModalOpen, rows, nameTask, dateStart, saveDataStart, closeModal, createNewTask,
+      isButtonState, textFieldName, saveDataStart, changeStateModal, createNewTask,
     } = this.props
     if (isButtonState) {
-      saveDataStart(date)
-    } else if (!isButtonState && !nameTask) {
-      closeModal(isModalOpen)
-    } else if (!isButtonState && nameTask) {
-      createNewTask(date, nameTask, rows, dateStart)
+      saveDataStart()
+    } else if (!isButtonState && !textFieldName) {
+      changeStateModal()
+    } else if (!isButtonState && textFieldName) {
+      createNewTask()
     }
   }
 
-  chooseTabsEvent = (event, value) => {
+  selectActiveTabsEvent = (event, value) => {
     const {
-      chooseTabs, rows,
+      selectActiveTabs,
     } = this.props
-    chooseTabs(value, rows.length)
-  }
-
-  closeModalEvent = () => {
-    const {
-      isModalOpen, closeModal,
-    } = this.props
-    closeModal(isModalOpen)
+    selectActiveTabs(value)
   }
 
   render() {
     const {
-      date, isButtonState, nameTask, tabContainerValue, isModalOpen, changeName, dataTask,
+      timeSpendTimer, isButtonState, textFieldName, tabContainerValue, isModalOpen, changeNameTextField, dataTask, changeStateModal, match,
     } = this.props
     const {
-      closeModalEvent, startTimeHandlers, chooseTabsEvent,
+      startTimeHandlers, selectActiveTabsEvent,
     } = this
-
     return (
       <Fragment>
         {isModalOpen && (
@@ -63,7 +56,7 @@ class ContainerTable extends Component {
               <span>You are tryning close your task without name, enter the title and try again!</span>
               <button
                 type='button'
-                onClick={closeModalEvent}
+                onClick={changeStateModal}
               >
                 CLOSE
               </button>
@@ -75,11 +68,11 @@ class ContainerTable extends Component {
             id='standard-dense'
             label='Name of your task'
             className={cx('standard-dense')}
-            value={nameTask}
-            onChange={changeName}
+            value={textFieldName}
+            onChange={changeNameTextField}
           />
           <div className={cx('timerCircle')}>
-            <span>{date.toLocaleTimeString('en-US', { timeZone: 'UTC', hour12: false })}</span>
+            <span>{toShowTimeSpend(timeSpendTimer)}</span>
           </div>
           <Button
             variant='contained'
@@ -94,7 +87,7 @@ class ContainerTable extends Component {
                 variant='fullWidth'
                 value={tabContainerValue}
                 className={cx('tabsClass')}
-                onChange={chooseTabsEvent}
+                onChange={selectActiveTabsEvent}
               >
                 <Tab component='a' label='TASKS LOG' />
                 <Tab component='a' label='TASKS CHART' />
@@ -104,12 +97,12 @@ class ContainerTable extends Component {
           <Switch>
             <Route
               exact
-              path='/'
+              path={match.path}
               component={TableTask}
             />
             <Route
               exact
-              path='/TaskChart'
+              path={`${match.path}/TaskChart`}
               render={() => (
                 <TaskChart dataTask={dataTask} />)}
             />
@@ -121,45 +114,34 @@ class ContainerTable extends Component {
 }
 
 ContainerTable.propTypes = {
-  date: PropTypes.object.isRequired,
-  dataTask: PropTypes.object.isRequired,
-  dateStart: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool,
-    PropTypes.number,
-  ]),
+  match: PropTypes.object.isRequired,
+  timeSpendTimer: PropTypes.number.isRequired,
+  dataTask: PropTypes.array.isRequired,
   isButtonState: PropTypes.bool.isRequired,
-  nameTask: PropTypes.string.isRequired,
+  textFieldName: PropTypes.string.isRequired,
   tabContainerValue: PropTypes.number.isRequired,
   isModalOpen: PropTypes.bool.isRequired,
-  rows: PropTypes.array.isRequired,
-  changeName: PropTypes.func.isRequired,
+  changeNameTextField: PropTypes.func.isRequired,
   saveDataStart: PropTypes.func.isRequired,
-  closeModal: PropTypes.func.isRequired,
+  changeStateModal: PropTypes.func.isRequired,
   createNewTask: PropTypes.func.isRequired,
-  chooseTabs: PropTypes.func.isRequired,
+  selectActiveTabs: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => ({
-  dataTask: tableDataTasks(state.initialState.rows),
-  date: state.initialState.date,
-  dateStart: state.initialState.dateStart,
+  dataTask: tableDataTasks(state.initialState.tasks),
+  timeSpendTimer: state.initialState.timeSpendTimer,
   isButtonState: state.initialState.isButtonState,
-  nameTask: state.initialState.nameTask,
+  textFieldName: state.initialState.textFieldName,
   tabContainerValue: state.initialState.tabContainerValue,
   isModalOpen: state.initialState.isModalOpen,
-  rows: state.initialState.rows,
-  changeName: PropTypes.func.isRequired,
-  saveDataStart: PropTypes.func.isRequired,
-  closeModal: PropTypes.func.isRequired,
-  createNewTask: PropTypes.func.isRequired,
-  chooseTabs: PropTypes.func.isRequired,
+
 })
 
 
 export default connect(
   mapStateToProps,
   {
-    changeName, saveDataStart, closeModal, createNewTask, chooseTabs,
+    changeNameTextField, saveDataStart, changeStateModal, createNewTask, selectActiveTabs,
   },
 )(ContainerTable)

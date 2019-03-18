@@ -1,42 +1,42 @@
 import { takeLatest, all } from 'redux-saga/effects'
 import {
-  changeNameSaga,
+  changeNameTextFieldSaga,
   saveDataStartSaga,
   startTimeSaga,
-  changeModalSaga,
+  changeStateModalSaga,
   createNewTaskSaga,
-  chooseTabsSaga,
-  changeTaskPageSaga,
+  selectActiveTabsSaga,
+  pushTaskPageSaga,
   deleteTaskSaga,
-  generateNewRowsSaga,
+  generateNewTasksSaga,
   returnHomePageSaga,
 } from './saga'
 
 import {
-  CHANGE_NAME,
+  CHANGE_NAME_TEXT_FIELD,
   SAVE_DATASTART,
   START_TIME,
-  CHANGE_MODAL,
+  CHANGE_STATE_MODAL,
   CREATE_NEWTASK,
-  CHOOSE_TABS,
-  CHANGE_TASKPAGE,
+  SELECT_ACTIVE_TABS,
+  PUSH_TASKPAGE,
   DELETE_TASK,
-  GENERATE_NEWROWS,
+  GENERATE_NEW_TASKS,
   RETURN_HOMEPAGE,
 } from '../Component/Actions'
 
 
 export default function* rootSaga() {
   yield all([
-    takeLatest(CHANGE_NAME, changeNameSaga),
+    takeLatest(CHANGE_NAME_TEXT_FIELD, changeNameTextFieldSaga),
     takeLatest(SAVE_DATASTART, saveDataStartSaga),
     takeLatest([START_TIME, CREATE_NEWTASK], startTimeSaga),
-    takeLatest(CHANGE_MODAL, changeModalSaga),
+    takeLatest(CHANGE_STATE_MODAL, changeStateModalSaga),
     takeLatest(CREATE_NEWTASK, createNewTaskSaga),
-    takeLatest(CHOOSE_TABS, chooseTabsSaga),
+    takeLatest(SELECT_ACTIVE_TABS, selectActiveTabsSaga),
     takeLatest(DELETE_TASK, deleteTaskSaga),
-    takeLatest(CHANGE_TASKPAGE, changeTaskPageSaga),
-    takeLatest(GENERATE_NEWROWS, generateNewRowsSaga),
+    takeLatest(PUSH_TASKPAGE, pushTaskPageSaga),
+    takeLatest(GENERATE_NEW_TASKS, generateNewTasksSaga),
     takeLatest(RETURN_HOMEPAGE, returnHomePageSaga),
   ])
 }

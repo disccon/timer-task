@@ -8,13 +8,14 @@ import NodFound from '../NodFound/NodFound'
 import ContainerTable from '../ContainerTable/ContainerTable'
 import TaskPage from '../TaskPage/TaskPage'
 import { startTime } from '../Actions'
+import tableDataOneTask from '../../helpers/tableDataOneTask'
 
 
 class App extends Component {
   componentDidMount() {
-    const { isRunData, date, startTime } = this.props
+    const { isRunData, startTime, timeSpendTimer } = this.props
     if (isRunData) {
-      startTime(date)
+      startTime(timeSpendTimer)
     }
     window.addEventListener('unload', this.onUnload)
   }
@@ -23,19 +24,50 @@ class App extends Component {
     window.removeEventListener('unload', this.onUnload)
   }
 
+  findTask = element => {
+    const { taskPage } = this.props
+    if (element.id === taskPage) {
+      return element
+    }
+  }
+
+  oneTask = () => {
+    const { tasks } = this.props
+    return tasks.find(this.findTask)
+  }
+
+  dataTask = () => {
+    const task = this.oneTask()
+    return tableDataOneTask(new Date(task.timeStart), task.timeSpend)
+  }
+
   onUnload = () => {
     const { initialState } = this.props
     localStorage.setItem('state', JSON.stringify({ ...initialState }))
   }
 
   render() {
-    const { history, taskPage } = this.props
+    const { history } = this.props
+    const { dataTask, oneTask } = this
     return (
       <ConnectedRouter history={history}>
         <div>
           <Switch>
-            <Route path={`/TaskPage/${taskPage}`} component={TaskPage} />
-            <Route path='/' component={ContainerTable} />
+            <Route
+              path='/TaskPage/:id'
+              render={() => (
+                <TaskPage
+                  task={oneTask()}
+                  dataTask={dataTask()}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/'
+              render={() => <Redirect to='/Home' />}
+            />
+            <Route path='/Home' component={ContainerTable} />
             <Redirect to='/NodFound' />
             <Route to='/NodFound' component={NodFound} />
           </Switch>
@@ -47,19 +79,21 @@ class App extends Component {
 
 App.propTypes = {
   initialState: PropTypes.object.isRequired,
+  tasks: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
-  taskPage: PropTypes.number.isRequired,
   isRunData: PropTypes.bool.isRequired,
-  date: PropTypes.object.isRequired,
-
   startTime: PropTypes.func.isRequired,
+  timeSpendTimer: PropTypes.number.isRequired,
+  taskPage: PropTypes.number.isRequired,
 }
 
 const mapStateToProps = state => ({
   initialState: state.initialState,
-  taskPage: state.initialState.taskPage,
   isRunData: state.initialState.isRunData,
-  date: state.initialState.date,
+  timeSpendTimer: state.initialState.timeSpendTimer,
+  tasks: state.initialState.tasks,
+  taskPage: state.initialState.taskPage,
+
 })
 
 export default connect(

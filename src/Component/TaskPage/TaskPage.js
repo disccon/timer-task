@@ -8,12 +8,12 @@ import { connect } from 'react-redux'
 import styles from './TableTask.scss'
 import TaskChart from '../TaskChart/TaskChart'
 import { returnHomePage } from '../Actions'
-import tableDataOneTask from '../../helpers/tableDataOneTask'
+import { toShowTimeSpend } from '../../helpers/toShowTimeSpend'
 
 const cx = classNames.bind(styles)
 
 
-const TaskPage = ({ row, returnHomePage, dataTask }) => (
+const TaskPage = ({ task, returnHomePage, dataTask }) => (
   <div className={cx('taskPage')}>
     <Button className={cx('returnButton')} onClick={returnHomePage}>
       return Table
@@ -30,30 +30,27 @@ const TaskPage = ({ row, returnHomePage, dataTask }) => (
           </TableRow>
         </TableHead>
         <TableBody>
-          <TableRow key={row.id} className={cx('tableBody')}>
+          <TableRow key={task.id} className={cx('tableBody')}>
             <TableCell
               component='th'
               scope='row'
               className={cx('tableCell')}
             >
-              {row.id}
+              {task.id}
             </TableCell>
-            <TableCell className={cx('tableCell')}>{row.task}</TableCell>
+            <TableCell className={cx('tableCell')}>{task.taskName}</TableCell>
             <TableCell
               className={cx('tableCell')}
             >
-              {new Date(row.timeStart).toLocaleTimeString('en-US', { timeZone: 'UTC', hour12: false })}
+              {new Date(task.timeStart).toLocaleTimeString()}
             </TableCell>
             <TableCell className={cx('tableCell')}>
-              {new Date(row.timeEnd).toLocaleTimeString('en-US', {
-                timeZone: 'UTC',
-                hour12: false,
-              })}
+              {new Date(task.timeEnd).toLocaleTimeString()}
             </TableCell>
             <TableCell
               className={cx('tableCell')}
             >
-              {new Date(row.timeSpend).toLocaleTimeString('en-US', { timeZone: 'UTC', hour12: false })}
+              {toShowTimeSpend(task.timeSpend)}
             </TableCell>
           </TableRow>
         </TableBody>
@@ -65,27 +62,14 @@ const TaskPage = ({ row, returnHomePage, dataTask }) => (
 
 
 TaskPage.propTypes = {
-  row: PropTypes.object.isRequired,
-  returnHomePage: PropTypes.func.isRequired,
+  task: PropTypes.object.isRequired,
   dataTask: PropTypes.array.isRequired,
-}
+  returnHomePage: PropTypes.func.isRequired,
 
-const mapStateToProps = state => {
-  const { rows, taskPage } = state.initialState
-  function findRow(element) {
-    if (element.id === taskPage) {
-      return element
-    }
-  }
-  const row = rows.find(findRow)
-  return {
-    dataTask: tableDataOneTask(new Date(row.timeStart), new Date(row.timeSpend)),
-    row,
-  }
 }
 
 
 export default connect(
-  mapStateToProps,
+  null,
   { returnHomePage },
 )(TaskPage)

@@ -1,7 +1,7 @@
 import initialState from '../stubs/initialState'
 import {
-  CHANGE_NAME__CHANGE,
-  CHANGE_NAME__FAILURE,
+  CHANGE_NAME_TEXT_FIELD__SUCCESS,
+  CHANGE_NAME_TEXT_FIELD__FAILURE,
 
   SAVE_DATASTART__SUCCESS,
   SAVE_DATASTART__FAILURE,
@@ -9,40 +9,40 @@ import {
   START_TIME__SUCCESS,
   START_TIME__FAILURE,
 
-  CHANGE_MODAL__OPEN,
-  CHANGE_MODAL__CLOSE,
-  CHANGE_MODAL__FAILURE,
+  CHANGE_STATE_MODAL__OPEN,
+  CHANGE_STATE_MODAL__CLOSE,
+  CHANGE_STATE_MODAL__FAILURE,
 
   CREATE_NEWTASK__SUCCESS,
   CREATE_NEWTASK__FAILURE,
 
-  CHOOSE_TABS__NOHAVE_TASK,
-  CHOOSE_TABS__SUCCESS,
-  CHOOSE_TABS__FAILURE,
+  SELECT_ACTIVE_TABS__NOHAVE_TASK,
+  SELECT_ACTIVE_TABS__SUCCESS,
+  SELECT_ACTIVE_TABS__FAILURE,
 
-  CHANGE_TASKPAGE__SUCCESS,
-  CHANGE_TASKPAGE__FAILURE,
+  PUSH_TASKPAGE__SUCCESS,
+  PUSH_TASKPAGE__FAILURE,
 
   DELETE_TASK__SUCCESS,
   DELETE_TASK__FAILURE,
 
-  GENERATE_NEWROWS__SUCCESS,
-  GENERATE_NEWROWS__FAILURE,
+  GENERATE_NEW_TASKS__SUCCESS,
+  GENERATE_NEW_TASKS__FAILURE,
 
   RETURN_HOMEPAGE__SUCCESS,
   RETURN_HOMEPAGE__FAILURE,
 } from '../Component/Actions'
 
-export default function stateReducer(state = initialState, action) {
+export default function taskReducer(state = initialState, action) {
   switch (action.type) {
-    case CHANGE_NAME__CHANGE: {
+    case CHANGE_NAME_TEXT_FIELD__SUCCESS: {
       return {
         ...state,
-        nameTask: action.payload.nameTask,
+        textFieldName: action.payload.textFieldName,
         error: undefined,
       }
     }
-    case CHANGE_NAME__FAILURE: {
+    case CHANGE_NAME_TEXT_FIELD__FAILURE: {
       return {
         ...state,
         error: action.error,
@@ -69,7 +69,7 @@ export default function stateReducer(state = initialState, action) {
     case START_TIME__SUCCESS: {
       return {
         ...state,
-        date: action.payload.date,
+        timeSpendTimer: action.payload.timeSpendTimer,
         error: undefined,
       }
     }
@@ -81,21 +81,21 @@ export default function stateReducer(state = initialState, action) {
     }
 
 
-    case CHANGE_MODAL__OPEN: {
+    case CHANGE_STATE_MODAL__OPEN: {
       return {
         ...state,
         isModalOpen: true,
         error: undefined,
       }
     }
-    case CHANGE_MODAL__CLOSE: {
+    case CHANGE_STATE_MODAL__CLOSE: {
       return {
         ...state,
         isModalOpen: false,
         error: undefined,
       }
     }
-    case CHANGE_MODAL__FAILURE: {
+    case CHANGE_STATE_MODAL__FAILURE: {
       return {
         ...state,
         error: action.error,
@@ -105,12 +105,12 @@ export default function stateReducer(state = initialState, action) {
     case CREATE_NEWTASK__SUCCESS: {
       return {
         ...state,
-        date: action.payload.data,
+        timeSpendTimer: action.payload.timeSpendTimer,
         dateStart: false,
         isRunData: false,
         isButtonState: true,
-        nameTask: '',
-        rows: action.payload.newRows,
+        textFieldName: '',
+        tasks: action.payload.newTasks,
         error: undefined,
       }
     }
@@ -122,19 +122,19 @@ export default function stateReducer(state = initialState, action) {
     }
 
 
-    case CHOOSE_TABS__NOHAVE_TASK: {
+    case SELECT_ACTIVE_TABS__NOHAVE_TASK: {
       return {
         ...state,
       }
     }
-    case CHOOSE_TABS__SUCCESS: {
+    case SELECT_ACTIVE_TABS__SUCCESS: {
       return {
         ...state,
         tabContainerValue: action.payload.tabContainerValue,
         error: undefined,
       }
     }
-    case CHOOSE_TABS__FAILURE: {
+    case SELECT_ACTIVE_TABS__FAILURE: {
       return {
         ...state,
         error: action.error,
@@ -145,7 +145,7 @@ export default function stateReducer(state = initialState, action) {
     case DELETE_TASK__SUCCESS: {
       return {
         ...state,
-        rows: action.payload.rows,
+        tasks: action.payload.tasks,
         taskPage: 1,
         error: undefined,
       }
@@ -157,14 +157,14 @@ export default function stateReducer(state = initialState, action) {
       }
     }
 
-    case CHANGE_TASKPAGE__SUCCESS: {
+    case PUSH_TASKPAGE__SUCCESS: {
       return {
         ...state,
         taskPage: action.payload.taskPage,
         error: undefined,
       }
     }
-    case CHANGE_TASKPAGE__FAILURE: {
+    case PUSH_TASKPAGE__FAILURE: {
       return {
         ...state,
         error: action.error,
@@ -172,15 +172,14 @@ export default function stateReducer(state = initialState, action) {
     }
 
 
-    case GENERATE_NEWROWS__SUCCESS: {
+    case GENERATE_NEW_TASKS__SUCCESS: {
       return {
         ...state,
-        taskPage: 1,
-        rows: action.payload.newRows,
+        tasks: action.payload.newTasks,
         error: undefined,
       }
     }
-    case GENERATE_NEWROWS__FAILURE: {
+    case GENERATE_NEW_TASKS__FAILURE: {
       return {
         ...state,
         error: action.error,

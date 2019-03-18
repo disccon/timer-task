@@ -5,35 +5,36 @@ import {
   Button, Paper, Table, TableBody, TableCell, TableHead, TableRow,
 } from '@material-ui/core'
 import styles from './TableTask.scss'
+import { toShowTimeSpend } from '../../helpers/toShowTimeSpend'
 
 const cx = classNames.bind(styles)
 
 
 class TableTask extends Component {
   dateToLocaleTime = row => (
-    new Date(row).toLocaleTimeString('en-US', { timeZone: 'UTC', hour12: false })
+    new Date(row).toLocaleTimeString()
   )
 
-  changeTaskPageEvent = rowId => () => {
+  pushTaskPageEvent = rowId => () => {
     const {
-      changeTaskPage,
+      pushTaskPage,
     } = this.props
-    changeTaskPage(rowId)
+    pushTaskPage(rowId)
   }
 
-  deleteTaskEvent = (rowId, rows) => () => {
+  deleteTaskEvent = taskId => () => {
     const {
       deleteTask,
     } = this.props
-    deleteTask(rowId, rows)
+    deleteTask(taskId)
   }
 
   render() {
     const {
-      rows, generateNewRows,
+      tasks, generateNewTasks,
     } = this.props
     const {
-      dateToLocaleTime, changeTaskPageEvent, deleteTaskEvent,
+      dateToLocaleTime, pushTaskPageEvent, deleteTaskEvent,
     } = this
     return (
       <div className={cx('tableTask')}>
@@ -51,36 +52,36 @@ class TableTask extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map(row => (
-                <TableRow key={row.id} className={cx('tableBody')}>
+              {tasks.map(task => (
+                <TableRow key={task.id} className={cx('tableBody')}>
                   <TableCell
                     component='th'
                     scope='row'
                     className={cx('tableCell')}
                   >
-                    {row.id}
+                    {task.id}
                   </TableCell>
-                  <TableCell className={cx('tableCell')}>{row.task}</TableCell>
+                  <TableCell className={cx('tableCell')}>{task.taskName}</TableCell>
                   <TableCell
                     className={cx('tableCell')}
                   >
-                    {dateToLocaleTime(row.timeStart)}
-                  </TableCell>
-                  <TableCell
-                    className={cx('tableCell')}
-                  >
-                    {dateToLocaleTime(row.timeEnd)}
+                    {dateToLocaleTime(task.timeStart)}
                   </TableCell>
                   <TableCell
                     className={cx('tableCell')}
                   >
-                    {dateToLocaleTime(row.timeSpend)}
+                    {dateToLocaleTime(task.timeEnd)}
+                  </TableCell>
+                  <TableCell
+                    className={cx('tableCell')}
+                  >
+                    {toShowTimeSpend(task.timeSpend)}
                   </TableCell>
                   <TableCell className={cx('tableCell')}>
                     <Button
                       variant='contained'
                       className={cx('buttonTable')}
-                      onClick={changeTaskPageEvent(row.id)}
+                      onClick={pushTaskPageEvent(task.id)}
                     >
                       {' '}
                       INFO
@@ -90,7 +91,7 @@ class TableTask extends Component {
                     <Button
                       variant='contained'
                       className={cx('buttonTable')}
-                      onClick={deleteTaskEvent(row.id, rows)}
+                      onClick={deleteTaskEvent(task.id)}
                     >
                       {' '}
                       DELETE
@@ -104,7 +105,7 @@ class TableTask extends Component {
         <Button
           variant='contained'
           className={cx('generate')}
-          onClick={generateNewRows}
+          onClick={generateNewTasks}
         >
           GENERATE
         </Button>
@@ -116,8 +117,8 @@ class TableTask extends Component {
 export default TableTask
 
 TableTask.propTypes = {
-  rows: PropTypes.array.isRequired,
+  tasks: PropTypes.array.isRequired,
   deleteTask: PropTypes.func.isRequired,
-  changeTaskPage: PropTypes.func.isRequired,
-  generateNewRows: PropTypes.func.isRequired,
+  pushTaskPage: PropTypes.func.isRequired,
+  generateNewTasks: PropTypes.func.isRequired,
 }
