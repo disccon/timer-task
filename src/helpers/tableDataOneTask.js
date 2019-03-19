@@ -15,12 +15,12 @@ const tableDataOneTask = (timeStart, timeSpendMilliseconds) => {
         const minutes = 60 - timeStartMinutes
         if (minutes > timeSpendMinutes) {
           oneHour = { hour: i, minutes: timeSpendMinutes }
-        } else {
+        } else if (minutes <= timeSpendMinutes) {
           oneHour = { hour: i, minutes }
           timeSpendMinutesLeft = timeSpendMinutes - minutes
           nowHours2 = i + 1
         }
-      } else {
+      } else if (timeSpendHours >= 1) {
         const minutes = 60 - timeStartMinutes
         oneHour = { hour: i, minutes }
         const timeSpend = timeSpendMilliseconds - (minutes * 60000)
