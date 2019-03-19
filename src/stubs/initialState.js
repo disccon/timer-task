@@ -13,6 +13,8 @@ if (localState) {
       isModalOpen: false,
       taskPage: state.taskPage,
       tasks: state.tasks,
+      task: state.task,
+      dataChart: state.dataTask,
     }
   } else {
     initialState = {
@@ -25,6 +27,8 @@ if (localState) {
       isModalOpen: false,
       taskPage: state.taskPage,
       tasks: state.tasks,
+      task: state.task,
+      dataChart: state.dataTask,
     }
   }
 } else {
@@ -37,6 +41,8 @@ if (localState) {
     isModalOpen: false,
     isButtonState: true,
     taskPage: 1,
+    task: {},
+    dataChart: [],
     tasks: [{
       id: 1,
       taskName: 'lorem ipsum d...',

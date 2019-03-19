@@ -1,5 +1,5 @@
 export const toShowTimeSpend = timeSpendMilliseconds => {
-  let hours = Math.floor((timeSpendMilliseconds / 3660000) % 60)
+  let hours = Math.floor((timeSpendMilliseconds / 3600000) % 60)
   hours = hours >= 10 ? hours : `0${hours}`
   let minutes = Math.floor((timeSpendMilliseconds / 60000) % 60)
   minutes = minutes >= 10 ? minutes : `0${minutes}`

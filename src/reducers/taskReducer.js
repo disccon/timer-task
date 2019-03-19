@@ -130,6 +130,7 @@ export default function taskReducer(state = initialState, action) {
     case SELECT_ACTIVE_TABS__SUCCESS: {
       return {
         ...state,
+        dataChart: action.payload.dataChart,
         tabContainerValue: action.payload.tabContainerValue,
         error: undefined,
       }
@@ -160,6 +161,8 @@ export default function taskReducer(state = initialState, action) {
     case PUSH_TASKPAGE__SUCCESS: {
       return {
         ...state,
+        task: action.payload.task,
+        dataChart: action.payload.dataChart,
         taskPage: action.payload.taskPage,
         error: undefined,
       }

@@ -6,7 +6,7 @@ const generateTasks = () => {
   }
   const newTasks = []
   const tasksLength = new Date().getHours()
-  const MaxTimeSpendMinutes = 40
+  const MaxTimeSpendMinutes = 4
   const minutesInterval = 20
   let timeStart = new Date(2019, 0, 1, 0, 0, 0)
   for (let i = 0; i < tasksLength; i += 1) {

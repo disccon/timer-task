@@ -6,14 +6,13 @@ import classNames from 'classnames'
 import {
   AppBar, Button, Tab, Tabs, TextField,
 } from '@material-ui/core'
-import { Route, Switch } from 'react-router'
+import { Redirect, Route, Switch } from 'react-router'
 import styles from './ContainerTable.scss'
 import TaskChart from '../TaskChart/TaskChart'
 import TableTask from '../TableTask'
 import {
   changeNameTextField, saveDataStart, changeStateModal, createNewTask, selectActiveTabs,
 } from '../Actions'
-import tableDataTasks from '../../helpers/tableDataTasks'
 import { toShowTimeSpend } from '../../helpers/toShowTimeSpend'
 
 const cx = classNames.bind(styles)
@@ -42,11 +41,8 @@ class ContainerTable extends Component {
 
   render() {
     const {
-      timeSpendTimer, isButtonState, textFieldName, tabContainerValue, isModalOpen, changeNameTextField, dataTask, changeStateModal, match,
+      timeSpendTimer, isButtonState, textFieldName, tabContainerValue, isModalOpen, changeNameTextField, changeStateModal, match,
     } = this.props
-    const {
-      startTimeHandlers, selectActiveTabsEvent,
-    } = this
     return (
       <Fragment>
         {isModalOpen && (
@@ -77,7 +73,7 @@ class ContainerTable extends Component {
           <Button
             variant='contained'
             className={cx('buttonStop')}
-            onClick={startTimeHandlers}
+            onClick={this.startTimeHandlers}
           >
             {isButtonState ? 'START' : 'STOP'}
           </Button>
@@ -87,7 +83,7 @@ class ContainerTable extends Component {
                 variant='fullWidth'
                 value={tabContainerValue}
                 className={cx('tabsClass')}
-                onChange={selectActiveTabsEvent}
+                onChange={this.selectActiveTabsEvent}
               >
                 <Tab component='a' label='TASKS LOG' />
                 <Tab component='a' label='TASKS CHART' />
@@ -95,17 +91,9 @@ class ContainerTable extends Component {
             </AppBar>
           </div>
           <Switch>
-            <Route
-              exact
-              path={match.path}
-              component={TableTask}
-            />
-            <Route
-              exact
-              path={`${match.path}/TaskChart`}
-              render={() => (
-                <TaskChart dataTask={dataTask} />)}
-            />
+            <Route exact path={match.path} component={TableTask} />
+            <Route exact path='/TaskChart' component={TaskChart} />
+            <Redirect to='/NodFound' />
           </Switch>
         </div>
       </Fragment>
@@ -116,7 +104,6 @@ class ContainerTable extends Component {
 ContainerTable.propTypes = {
   match: PropTypes.object.isRequired,
   timeSpendTimer: PropTypes.number.isRequired,
-  dataTask: PropTypes.array.isRequired,
   isButtonState: PropTypes.bool.isRequired,
   textFieldName: PropTypes.string.isRequired,
   tabContainerValue: PropTypes.number.isRequired,
@@ -129,7 +116,6 @@ ContainerTable.propTypes = {
 }
 
 const mapStateToProps = state => ({
-  dataTask: tableDataTasks(state.initialState.tasks),
   timeSpendTimer: state.initialState.timeSpendTimer,
   isButtonState: state.initialState.isButtonState,
   textFieldName: state.initialState.textFieldName,

@@ -3,13 +3,14 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 
-const TaskChart = ({ dataTask }) => (
+const TaskChart = ({ dataChart }) => (
   <BarChart
     width={1250}
     height={300}
-    data={dataTask}
+    data={dataChart}
     margin={{
       top: 20, right: 30, left: 0, bottom: 5,
     }}
@@ -23,8 +24,16 @@ const TaskChart = ({ dataTask }) => (
   </BarChart>
 )
 
+
 TaskChart.propTypes = {
-  dataTask: PropTypes.array.isRequired,
+  dataChart: PropTypes.array.isRequired,
 }
 
-export default TaskChart
+const mapStateToProps = state => ({
+  dataChart: state.initialState.dataChart,
+})
+
+
+export default connect(
+  mapStateToProps,
+)(TaskChart)

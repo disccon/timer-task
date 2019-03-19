@@ -41,6 +41,8 @@ import {
   startTime,
 } from '../Component/Actions'
 import generateTasks from '../helpers/generateTasks'
+import tableDataOneTask from '../helpers/tableDataOneTask'
+import tableDataTasks from '../helpers/tableDataTasks'
 
 export function* changeNameTextFieldSaga(action) {
   try {
@@ -151,7 +153,8 @@ export function* selectActiveTabsSaga(action) {
   const {
     tabContainerValue,
   } = action.payload
-  const tasksLength = yield select(state => state.initialState.tasks.length)
+  const reduxState = yield select()
+  const { tasksLength, tasks } = reduxState.initialState
   try {
     if (tasksLength === 0) {
       yield put({
@@ -166,13 +169,14 @@ export function* selectActiveTabsSaga(action) {
         },
       })
     } else if (tabContainerValue === 1) {
-      yield put(push('/Home/TaskChart'))
+      const dataChart = tableDataTasks(tasks)
       yield put({
         type: SELECT_ACTIVE_TABS__SUCCESS,
         payload: {
-          tabContainerValue: 1,
+          tabContainerValue: 1, dataChart,
         },
       })
+      yield put(push('/TaskChart'))
     }
   } catch (error) {
     yield put({
@@ -201,13 +205,22 @@ export function* deleteTaskSaga(action) {
   }
 }
 
+
 export function* pushTaskPageSaga(action) {
   const { taskPage } = action.payload
+  const tasks = yield select(state => state.initialState.tasks)
+  const findTask = element => {
+    if (element.id === taskPage) {
+      return element
+    }
+  }
+  const task = tasks.find(findTask)
+  const dataChart = tableDataOneTask(new Date(task.timeStart), task.timeSpend)
   try {
     yield put({
       type: PUSH_TASKPAGE__SUCCESS,
       payload: {
-        taskPage,
+        taskPage, task, dataChart,
       },
     })
     yield put(push(`/TaskPage/${taskPage}`))
@@ -243,7 +256,7 @@ export function* returnHomePageSaga() {
     yield put({
       type: RETURN_HOMEPAGE__SUCCESS,
     })
-    yield put(push('/Home'))
+    yield put(push('/'))
   } catch (error) {
     yield put({
       type: RETURN_HOMEPAGE__FAILURE,

@@ -4,9 +4,11 @@ import TableTask from './TableTask'
 
 
 it('TableTask test', () => {
+  const tasksLength = new Date().getHours()
   const newTasks = generateRows()
   const wrapper = mount(<TableTask tasks={newTasks} />)
   expect(wrapper.props().tasks).toEqual(newTasks)
+  expect(wrapper.props().tasks.length).toBe(tasksLength)
   expect(wrapper.props().tasks[0]).toHaveProperty('id', 1)
   expect(wrapper.props().tasks[0]).toHaveProperty('taskName', 'Task 1')
   expect(wrapper.props().tasks[0]).toHaveProperty('timeStart', 'timeEnd', 'timeSpend')

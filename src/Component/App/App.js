@@ -8,7 +8,6 @@ import NodFound from '../NodFound/NodFound'
 import ContainerTable from '../ContainerTable/ContainerTable'
 import TaskPage from '../TaskPage/TaskPage'
 import { startTime } from '../Actions'
-import tableDataOneTask from '../../helpers/tableDataOneTask'
 
 
 class App extends Component {
@@ -24,23 +23,6 @@ class App extends Component {
     window.removeEventListener('unload', this.onUnload)
   }
 
-  findTask = element => {
-    const { taskPage } = this.props
-    if (element.id === taskPage) {
-      return element
-    }
-  }
-
-  oneTask = () => {
-    const { tasks } = this.props
-    return tasks.find(this.findTask)
-  }
-
-  dataTask = () => {
-    const task = this.oneTask()
-    return tableDataOneTask(new Date(task.timeStart), task.timeSpend)
-  }
-
   onUnload = () => {
     const { initialState } = this.props
     localStorage.setItem('state', JSON.stringify({ ...initialState }))
@@ -48,28 +30,14 @@ class App extends Component {
 
   render() {
     const { history } = this.props
-    const { dataTask, oneTask } = this
     return (
       <ConnectedRouter history={history}>
         <div>
           <Switch>
-            <Route
-              path='/TaskPage/:id'
-              render={() => (
-                <TaskPage
-                  task={oneTask()}
-                  dataTask={dataTask()}
-                />
-              )}
-            />
-            <Route
-              exact
-              path='/'
-              render={() => <Redirect to='/Home'/>}
-            />
-            <Route path='/Home' component={ContainerTable}/>
-            <Redirect to='/NodFound'/>
-            <Route to='/NodFound' component={NodFound}/>
+            <Route path='/TaskPage/:id' component={TaskPage} />
+            <Route path='/NodFound' component={NodFound} />
+            <Route path='/' component={ContainerTable} />
+            <Redirect to='/NodFound' />
           </Switch>
         </div>
       </ConnectedRouter>
@@ -79,21 +47,16 @@ class App extends Component {
 
 App.propTypes = {
   initialState: PropTypes.object.isRequired,
-  tasks: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
   isRunData: PropTypes.bool.isRequired,
-  startTime: PropTypes.func.isRequired,
   timeSpendTimer: PropTypes.number.isRequired,
-  taskPage: PropTypes.number.isRequired,
+  startTime: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => ({
   initialState: state.initialState,
   isRunData: state.initialState.isRunData,
   timeSpendTimer: state.initialState.timeSpendTimer,
-  tasks: state.initialState.tasks,
-  taskPage: state.initialState.taskPage,
-
 })
 
 export default connect(

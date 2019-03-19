@@ -13,7 +13,7 @@ import { toShowTimeSpend } from '../../helpers/toShowTimeSpend'
 const cx = classNames.bind(styles)
 
 
-const TaskPage = ({ task, returnHomePage, dataTask }) => (
+const TaskPage = ({ task, returnHomePage }) => (
   <div className={cx('taskPage')}>
     <Button className={cx('returnButton')} onClick={returnHomePage}>
       return Table
@@ -56,20 +56,22 @@ const TaskPage = ({ task, returnHomePage, dataTask }) => (
         </TableBody>
       </Table>
     </Paper>
-    <TaskChart dataTask={dataTask} />
+    <TaskChart />
   </div>
 )
 
 
 TaskPage.propTypes = {
   task: PropTypes.object.isRequired,
-  dataTask: PropTypes.array.isRequired,
   returnHomePage: PropTypes.func.isRequired,
-
 }
+
+const mapStateToProps = state => ({
+  task: state.initialState.task,
+})
 
 
 export default connect(
-  null,
+  mapStateToProps,
   { returnHomePage },
 )(TaskPage)

@@ -33,9 +33,6 @@ class TableTask extends Component {
     const {
       tasks, generateNewTasks,
     } = this.props
-    const {
-      dateToLocaleTime, pushTaskPageEvent, deleteTaskEvent,
-    } = this
     return (
       <div className={cx('tableTask')}>
         <Paper className={cx('paperClass')}>
@@ -65,12 +62,12 @@ class TableTask extends Component {
                   <TableCell
                     className={cx('tableCell')}
                   >
-                    {dateToLocaleTime(task.timeStart)}
+                    {this.dateToLocaleTime(task.timeStart)}
                   </TableCell>
                   <TableCell
                     className={cx('tableCell')}
                   >
-                    {dateToLocaleTime(task.timeEnd)}
+                    {this.dateToLocaleTime(task.timeEnd)}
                   </TableCell>
                   <TableCell
                     className={cx('tableCell')}
@@ -81,7 +78,7 @@ class TableTask extends Component {
                     <Button
                       variant='contained'
                       className={cx('buttonTable')}
-                      onClick={pushTaskPageEvent(task.id)}
+                      onClick={this.pushTaskPageEvent(task.id)}
                     >
                       {' '}
                       INFO
@@ -91,7 +88,7 @@ class TableTask extends Component {
                     <Button
                       variant='contained'
                       className={cx('buttonTable')}
-                      onClick={deleteTaskEvent(task.id)}
+                      onClick={this.deleteTaskEvent(task.id)}
                     >
                       {' '}
                       DELETE
