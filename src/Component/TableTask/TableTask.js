@@ -7,6 +7,7 @@ import {
 import styles from './TableTask.scss'
 import { toShowTimeSpend } from '../../helpers/toShowTimeSpend'
 
+
 const cx = classNames.bind(styles)
 
 
@@ -52,8 +53,6 @@ class TableTask extends Component {
               {tasks.map(task => (
                 <TableRow key={task.id} className={cx('tableBody')}>
                   <TableCell
-                    component='th'
-                    scope='row'
                     className={cx('tableCell')}
                   >
                     {task.id}
@@ -111,11 +110,11 @@ class TableTask extends Component {
   }
 }
 
-export default TableTask
-
 TableTask.propTypes = {
   tasks: PropTypes.array.isRequired,
-  deleteTask: PropTypes.func.isRequired,
-  pushTaskPage: PropTypes.func.isRequired,
-  generateNewTasks: PropTypes.func.isRequired,
+  deleteTask: PropTypes.func,
+  pushTaskPage: PropTypes.func,
+  generateNewTasks: PropTypes.func,
 }
+
+export default TableTask

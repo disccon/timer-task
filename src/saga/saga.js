@@ -41,8 +41,7 @@ import {
   startTime,
 } from '../Component/Actions'
 import generateTasks from '../helpers/generateTasks'
-import tableDataOneTask from '../helpers/tableDataOneTask'
-import tableDataTasks from '../helpers/tableDataTasks'
+
 
 export function* changeNameTextFieldSaga(action) {
   try {
@@ -121,10 +120,10 @@ export function* changeStateModalSaga() {
 
 
 export function* createNewTaskSaga() {
-  const state = yield select(state => state.initialState)
+  const stateRedux = yield select(state => state.initialState)
   const {
     textFieldName, tasks, dateStart, timeSpendTimer,
-  } = state
+  } = stateRedux
   try {
     const id = tasks.length === 0 ? 1 : tasks[tasks.length - 1].id + 1
     const newTasks = [...tasks, {
@@ -153,10 +152,9 @@ export function* selectActiveTabsSaga(action) {
   const {
     tabContainerValue,
   } = action.payload
-  const reduxState = yield select()
-  const { tasksLength, tasks } = reduxState.initialState
+  const tasks = yield select(state => state.initialState.tasks)
   try {
-    if (tasksLength === 0) {
+    if (tasks.length === 0) {
       yield put({
         type: SELECT_ACTIVE_TABS__NOHAVE_TASK,
       })
@@ -169,11 +167,10 @@ export function* selectActiveTabsSaga(action) {
         },
       })
     } else if (tabContainerValue === 1) {
-      const dataChart = tableDataTasks(tasks)
       yield put({
         type: SELECT_ACTIVE_TABS__SUCCESS,
         payload: {
-          tabContainerValue: 1, dataChart,
+          tabContainerValue: 1,
         },
       })
       yield put(push('/TaskChart'))
@@ -209,18 +206,12 @@ export function* deleteTaskSaga(action) {
 export function* pushTaskPageSaga(action) {
   const { taskPage } = action.payload
   const tasks = yield select(state => state.initialState.tasks)
-  const findTask = element => {
-    if (element.id === taskPage) {
-      return element
-    }
-  }
-  const task = tasks.find(findTask)
-  const dataChart = tableDataOneTask(new Date(task.timeStart), task.timeSpend)
+  const task = tasks.find(i => i.id === taskPage)
   try {
     yield put({
       type: PUSH_TASKPAGE__SUCCESS,
       payload: {
-        taskPage, task, dataChart,
+        taskPage, task,
       },
     })
     yield put(push(`/TaskPage/${taskPage}`))

@@ -1,6 +1,7 @@
-const tableDataOneTask = (timeStart, timeSpendMilliseconds) => {
+const tableDataOneTask = task => {
+  const { timeStart, timeSpend } = task
   const data = []
-  let timeSpendMinutes = timeSpendMilliseconds / 1000 / 60
+  let timeSpendMinutes = timeSpend / 1000 / 60
   const timeStartHours = new Date(timeStart).getHours()
   const timeStartMinutes = new Date(timeStart).getMinutes()
   for (let i = 0; i < 24; i += 1) {

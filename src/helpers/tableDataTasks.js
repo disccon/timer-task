@@ -5,7 +5,7 @@ const tableDataTasks = tasks => {
   if (tasks.length !== 0) {
     const data = []
     tasks.forEach(item => {
-      const oneTask = tableDataOneTask(item.timeStart, item.timeSpend)
+      const oneTask = tableDataOneTask(item)
       data.push(oneTask)
     })
     data.reduce((previousValue, currentItem, index, arr) => {
